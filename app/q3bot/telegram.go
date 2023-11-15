@@ -26,9 +26,16 @@ func New() *bot.Bot {
 }
 
 func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	_, err := b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID: update.Message.Chat.ID,
-		Text:   update.Message.Text,
+	answer, err := openAIResponse(ctx, update.Message.Text)
+	if err != nil {
+		log.Printf("[Q3BOT] [ERROR] failed to get answer from OpenAI: %s", err)
+		return
+	}
+
+	_, err = b.SendMessage(ctx, &bot.SendMessageParams{
+		ChatID:    update.Message.Chat.ID,
+		Text:      answer,
+		ParseMode: "HTML",
 	})
 
 	if err != nil {

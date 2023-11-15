@@ -9,6 +9,7 @@ import (
 var config struct {
 	TelegramToken string `long:"telegram" description:"Telegram bot token" required:"true"`
 	OpenAIToken   string `long:"openai" description:"OpenAI API key" required:"true"`
+	ServerURL     string `long:"server" description:"Quake 3 server URL" required:"true"`
 	Verbose       bool   `short:"v" long:"verbose" description:"Show verbose debug information"`
 }
 
