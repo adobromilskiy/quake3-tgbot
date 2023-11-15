@@ -3,6 +3,7 @@ package q3bot
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
@@ -26,6 +27,10 @@ func New() *bot.Bot {
 }
 
 func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
+	if !strings.HasPrefix(update.Message.Text, "q3bot") {
+		return
+	}
+
 	answer, err := openAIResponse(ctx, update.Message.Text)
 	if err != nil {
 		log.Printf("[Q3BOT] [ERROR] failed to get answer from OpenAI: %s", err)
@@ -33,9 +38,10 @@ func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	}
 
 	_, err = b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID:    update.Message.Chat.ID,
-		Text:      answer,
-		ParseMode: "HTML",
+		ChatID:                update.Message.Chat.ID,
+		Text:                  answer,
+		ParseMode:             "HTML",
+		DisableWebPagePreview: true,
 	})
 
 	if err != nil {
