@@ -7,3 +7,9 @@ build:
 
 run:
 	cd .bin && ./app -v --telegram=$(TELEGRAM) --openai=$(OPENAI) --server=$(Q3SERV)
+
+image:
+	docker build -t q3bot .
+
+container:
+	docker run -it --rm q3bot -v --telegram=$(TELEGRAM) --openai=$(OPENAI) --server=$(Q3SERV)

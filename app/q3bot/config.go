@@ -1,7 +1,7 @@
 package q3bot
 
 import (
-	"log"
+	"os"
 
 	"github.com/jessevdk/go-flags"
 )
@@ -14,7 +14,14 @@ var config struct {
 }
 
 func init() {
+	if len(os.Args) == 1 {
+		os.Args = append(os.Args, "--help")
+	}
+
 	if _, err := flags.Parse(&config); err != nil {
-		log.Fatalf("[Q3BOT] [ERROR] init q3bot config failed: %s", err)
+		if os.Args[1] == "--help" || os.Args[1] == "-h" {
+			os.Exit(0)
+		}
+		os.Exit(1)
 	}
 }

@@ -178,7 +178,8 @@ func getPlayerInfo(args openAIFuncArg) (string, error) {
 					continue
 				}
 
-				result += fmt.Sprintf("<b>%s</b>:\nAccuracy: %.2f / Hit Efficiency: %.2f\n\n", weapons[weapon.Name], float64(weapon.Hits)/float64(weapon.Shots)*100, float64(weapon.Kills)/float64(weapon.Hits)*100)
+				result += fmt.Sprintf("<b>%s</b>:\nAccuracy: %.2f / Hit Efficiency: %.2f\n", weapons[weapon.Name], float64(weapon.Hits)/float64(weapon.Shots)*100, float64(weapon.Kills)/float64(weapon.Hits)*100)
+				result += fmt.Sprintf("Kill-Shot Ratio: %.2f\n\n", float64(weapon.Shots)/float64(weapon.Kills))
 			}
 		}
 	}
