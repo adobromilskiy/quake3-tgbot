@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"sort"
 
 	"github.com/adobromilskiy/quake3-stats/app/api"
 	"github.com/sashabaranov/go-openai"
@@ -104,9 +105,13 @@ func getLastMatchesInfo(args openAIFuncArg) (string, error) {
 	for _, match := range matches {
 		result += fmt.Sprintf("<b>%s</b> <i>(%s)</i>\n\n", match.Map, secondsToTime(match.Duration))
 
+		sort.Slice(match.Players, func(i, j int) bool {
+			return match.Players[i].Score > match.Players[j].Score
+		})
+
 		for _, player := range match.Players {
 			kdr := float64(player.Kills) / float64(player.Deaths)
-			result += fmt.Sprintf("<b>%s</b>: %d/%d/%d - <i>(%.2f)</i>\n", player.Name, player.Kills, player.Deaths, player.Suicides, kdr)
+			result += fmt.Sprintf("<b>%s</b> [%d]: %d/%d/%d - <i>(%.2f)</i>\n", player.Name, player.Score, player.Kills, player.Deaths, player.Suicides, kdr)
 		}
 
 		result += "\n\n\n"
