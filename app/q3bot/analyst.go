@@ -64,9 +64,9 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 
 				lastMatchID = matches[0].ID
 
-				prompt := "You are a helpfull assistant. When asked for you name, you must respond with 'Quake3 Bot'. Imagine that you are a game commentator. Please compare matches about Quake 3 game and make summary for each player with sarcastic form. YOUR ANSWER MUST BE NO MORE THEN 350 WORDS IN RUSSIAN LANGUAGE. WINNER IS THE ONE WHO HAS THE MOST SCORES."
+				prompt := "You are a helpfull assistant. When asked for you name, you must respond with 'Quake3 Bot'. Imagine that you are a game commentator. Please compare matches about Quake 3 game and make summary for each player with sarcastic form. YOUR ANSWER MUST BE LESS THAN 200 WORDS IN RUSSIAN LANGUAGE. WINNER IS THE ONE WHO HAS THE MOST SCORES."
 				if rand.Intn(100) > 30 {
-					prompt = "You are a helpfull assistant. When asked for you name, you must respond with 'Quake3 Bot'. Imagine that you are a game commentator. Please analyze the match info about Quake 3 game and make summary for each player with sarcastic form. YOUR ANSWER MUST BE NO MORE THEN 350 WORDS IN RUSSIAN LANGUAGE. WINNER IS THE ONE WHO HAS THE MOST SCORES."
+					prompt = "You are a helpfull assistant. When asked for you name, you must respond with 'Quake3 Bot'. Imagine that you are a game commentator. Please analyze the match info about Quake 3 game and make summary for each player with sarcastic form. YOUR ANSWER MUST BE LESS THAN 200 WORDS IN RUSSIAN LANGUAGE. WINNER IS THE ONE WHO HAS THE MOST SCORES."
 
 					match = match[0:]
 				}
