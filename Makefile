@@ -7,10 +7,10 @@ build:
 	cd app && go build -mod=vendor -o ../.bin/app
 
 run:
-	cd .bin && ./app -v --telegram=$(TELEGRAM) --openai=$(OPENAI) --server=$(Q3SERV) --chat=$(CHATID)
+	cd .bin && ./app -v --telegram=$(TELEGRAM) --openai=$(OPENAI) --server=$(Q3SERV) --chat=$(CHATID) --interval=20s
 
 image:
 	docker build -t q3bot .
 
 container:
-	docker run -it --rm q3bot -v --telegram=$(TELEGRAM) --openai=$(OPENAI) --server=$(Q3SERV) --chat=$(CHATID)
+	docker run -it --rm q3bot -v --telegram=$(TELEGRAM) --openai=$(OPENAI) --server=$(Q3SERV) --chat=$(CHATID) --interval=20s
