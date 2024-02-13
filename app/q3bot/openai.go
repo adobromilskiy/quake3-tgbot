@@ -199,3 +199,37 @@ func secondsToTime(sec uint) string {
 
 	return fmt.Sprintf("%02d:%02d", minutes, seconds)
 }
+
+func analyzeMatchInfo(ctx context.Context, jsonData, prompt string) (result string, err error) {
+	client := openai.NewClient(config.OpenAIToken)
+
+	messages := make([]openai.ChatCompletionMessage, 0)
+
+	messages = append(messages, openai.ChatCompletionMessage{
+		Role:    openai.ChatMessageRoleSystem,
+		Content: prompt,
+	})
+
+	messages = append(messages, openai.ChatCompletionMessage{
+		Role:    openai.ChatMessageRoleUser,
+		Content: jsonData,
+	})
+
+	resp, err := client.CreateChatCompletion(
+		ctx,
+		openai.ChatCompletionRequest{
+			Model:    openai.GPT3Dot5Turbo,
+			Messages: messages,
+		},
+	)
+
+	if len(resp.Choices) == 0 {
+		return "", errors.New("no response from OpenAI")
+	}
+
+	if err != nil {
+		return "", nil
+	}
+
+	return resp.Choices[0].Message.Content, nil
+}

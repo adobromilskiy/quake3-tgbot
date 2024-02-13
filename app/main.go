@@ -14,5 +14,7 @@ func main() {
 
 	b := q3bot.New()
 
+	go q3bot.Analyze(ctx, b)
+
 	b.Start(ctx)
 }

@@ -2,6 +2,7 @@ package q3bot
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 
@@ -23,6 +24,8 @@ func New() *bot.Bot {
 		log.Fatalf("[Q3BOT] [ERROR] fail to create bot: %s", err)
 	}
 
+	b.RegisterHandler(bot.HandlerTypeMessageText, "/chatid", bot.MatchTypeExact, chatIDHandler)
+
 	return b
 }
 
@@ -40,6 +43,19 @@ func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	_, err = b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID:                update.Message.Chat.ID,
 		Text:                  answer,
+		ParseMode:             "HTML",
+		DisableWebPagePreview: true,
+	})
+
+	if err != nil {
+		log.Printf("[Q3BOT] [ERROR] failed to send message: %s", err)
+	}
+}
+
+func chatIDHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+	_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+		ChatID:                update.Message.Chat.ID,
+		Text:                  fmt.Sprintf("Chat ID: %d", update.Message.Chat.ID),
 		ParseMode:             "HTML",
 		DisableWebPagePreview: true,
 	})
