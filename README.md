@@ -22,15 +22,17 @@ Launch quake3-tgbot with next parameters:
 | --telegram | telegram bot token from BotFather |
 | --openai   | OpenAI token |
 | --server   | [quake3-stats](https://github.com/adobromilskiy/quake3-stats) server url |
+| --chat     | Telegram CHATID for analyst |
+| --interval | Interval beetween getting game results |
 
 Example:
 
 ```sh
-./quake3-tgbot -v --telegram=<tg-bot-token> --openai=<openai-token> --server=<quake3-stats-server-url>
+./quake3-tgbot -v --telegram=<tg-bot-token> --openai=<openai-token> --server=<quake3-stats-server-url> --chat=<chat-id> --interval=5m
 ```
 
 or
 
 ```sh
-docker run -ti --rm adobromilskiy/quake3-tgbot:latest -v --telegram=<tg-bot-token> --openai=<openai-token> --server=<quake3-stats-server-url>
+docker run -ti --rm adobromilskiy/quake3-tgbot:latest -v --telegram=<tg-bot-token> --openai=<openai-token> --server=<quake3-stats-server-url> --chat=<chat-id> --interval=5m
 ```
