@@ -44,8 +44,6 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 					continue
 				}
 
-				log.Println("RESPONSE", len(response))
-
 				if len(response) > 1024 {
 					_, err = b.SendMessage(ctx, &bot.SendMessageParams{
 						ChatID:                config.ChatID,
@@ -61,7 +59,7 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 					continue
 				}
 
-				prompt = fmt.Sprintf("Create an image based on next description:\n\n %s", response)
+				prompt = fmt.Sprintf("Create an image in cybersport style based on next description:\n\n %s", response)
 
 				image, err := generateImage(ctx, prompt)
 				if err != nil {
