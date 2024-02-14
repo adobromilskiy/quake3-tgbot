@@ -233,3 +233,25 @@ func analyzeMatchInfo(ctx context.Context, jsonData, prompt string) (result stri
 
 	return resp.Choices[0].Message.Content, nil
 }
+
+func generateImage(ctx context.Context, prompt string) (string, error) {
+	client := openai.NewClient(config.OpenAIToken)
+
+	reqUrl := openai.ImageRequest{
+		Prompt:         prompt,
+		Size:           openai.CreateImageSize1024x1024,
+		ResponseFormat: openai.CreateImageResponseFormatURL,
+		N:              1,
+	}
+
+	respUrl, err := client.CreateImage(ctx, reqUrl)
+	if err != nil {
+		return "", err
+	}
+
+	if len(respUrl.Data) == 0 {
+		return "", errors.New("no response from OpenAI")
+	}
+
+	return respUrl.Data[0].URL, nil
+}
