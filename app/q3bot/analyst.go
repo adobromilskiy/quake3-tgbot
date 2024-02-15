@@ -64,6 +64,16 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 				image, err := generateImage(ctx, prompt)
 				if err != nil {
 					log.Printf("[Q3BOT] [ERROR] failed to generate image: %s", err)
+					_, err = b.SendMessage(ctx, &bot.SendMessageParams{
+						ChatID:                config.ChatID,
+						Text:                  response,
+						ParseMode:             "HTML",
+						DisableWebPagePreview: true,
+					})
+
+					if err != nil {
+						log.Printf("[Q3BOT] [ERROR] failed to send message: %s", err)
+					}
 					continue
 				}
 
