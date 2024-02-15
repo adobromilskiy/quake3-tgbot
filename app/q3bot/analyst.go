@@ -36,12 +36,17 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 				lastMatchID = match.ID
 
 				// prompt := "You are a game commentator. Please, analyze match about Quake 3 game and make short summary about each player in comedian style with gaslighting. PLEASE REPLY SHORTLY LESS THAN 100 WORDS IN RUSSIAN LANGUAGE. WINNER IS THE ONE WHO HAS THE MOST SCORES."
-				prompt := "Imagine you're commenting on the outcome of a Quake 3 game. Winner is the one who has the most scores. YOUR COMMENT SHOULD BE WRITTEN IN A SARCASTIC TONE IN RUSSIAN LANGUAGE AND BE UNDER 500 CHARACTERS."
+				// prompt := "Imagine you're commenting on the outcome of a Quake 3 game. Winner is the one who has the most scores. YOUR COMMENT SHOULD BE WRITTEN IN A SARCASTIC TONE IN RUSSIAN LANGUAGE AND BE UNDER 500 CHARACTERS."
+				prompt := "Представь что ты комментируешь итоги игры в Quake 3. Победитель тот, у кого больше всех очков. Твой комментарий должен быть написан в саркастическом тоне на русском языке. ПОЖАЛУЙСТА, ТВОЕ СООБЩЕНИЕ ДОЛЖНО СОДЕРЖАТЬ МАКСИМУМ 120 СЛОВ!!!"
 
 				response, err := analyzeMatchInfo(ctx, createMatchInfo(match), prompt)
 				if err != nil {
 					log.Printf("[Q3BOT] [ERROR] failed to analyze match info: %s", err)
 					continue
+				}
+
+				if config.Verbose {
+					log.Printf("[Q3BOT] [DEBUG] comment length %d", len(response))
 				}
 
 				if len(response) > 1024 {
@@ -59,7 +64,7 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 					continue
 				}
 
-				prompt = fmt.Sprintf("Create an image in cybersport style based on next description:\n\n %s", response)
+				prompt = fmt.Sprintf("Нарисуй изображение про киберспорт, основываясь на следующем тексте:\n\n %s", response)
 
 				image, err := generateImage(ctx, prompt)
 				if err != nil {
@@ -119,27 +124,42 @@ func createMatchInfo(match api.Match) string {
 	})
 
 	weapons := map[string]string{
-		"G":   "Gauntlet",
-		"MG":  "Machine Gun",
-		"SG":  "Shotgun",
-		"GL":  "Grenade Launcher",
-		"RL":  "Rocket Launcher",
-		"LG":  "Lightning Gun",
-		"RG":  "Railgun",
-		"PG":  "Plasma Gun",
+		"G":   "Перчатка",
+		"MG":  "Пулемет",
+		"SG":  "Дробовик",
+		"GL":  "Гранаты",
+		"RL":  "Ракетница",
+		"LG":  "Шкварка",
+		"RG":  "Рельса",
+		"PG":  "Плазма",
 		"BFG": "BFG",
 	}
 
-	result := fmt.Sprintf("Map: %s, Duration: %s\n", match.Map, secondsToTime(match.Duration))
+	players := map[string]string{
+		"IP":           "Дед",
+		"Javascripter": "Усы",
+		"twist":        "Мой отец",
+	}
+
+	result := fmt.Sprintf("Карта %s с продолжительностю %s\n", match.Map, secondsToTime(match.Duration))
 
 	for _, player := range match.Players {
 		kdr := float64(player.Kills) / float64(player.Deaths)
-		result += fmt.Sprintf("Player: %s, Scores: %d, kills: %d, deaths: %d, suicides: %d, kdr: (%.2f)\n", player.Name, player.Score, player.Kills, player.Deaths, player.Suicides, kdr)
-		result += fmt.Sprintf("Damage given: %d, damage taken: %d\n", player.DamageGiven, player.DamageTaken)
-		result += fmt.Sprintf("Health taken: %d, armor taken: %d\n", player.HealtTotal, player.ArmorTotal)
+		name, ok := players[player.Name]
+		if !ok {
+			name = player.Name
+		}
+
+		result += fmt.Sprintf("%s набрал очков %d, сделав %d фрагов. Другие игроки набрали на нем %d фрагов. Себе причинил вред %d раз. При этом его КДР составил %.2f\n", name, player.Score, player.Kills, player.Deaths, player.Suicides, kdr)
+		result += fmt.Sprintf("Нанес урона: %d, получил урона: %d\n", player.DamageGiven, player.DamageTaken)
+		result += fmt.Sprintf("Подобрал аптечек: %d, подобрал брони: %d\n", player.HealtTotal, player.ArmorTotal)
 
 		for _, weapon := range player.Weapons {
-			result += fmt.Sprintf("With %s made shots: %d, hits: %d, kills: %d\n", weapons[weapon.Name], weapon.Shots, weapon.Hits, weapon.Kills)
+			if weapon.Name == "G" {
+				result += fmt.Sprintf("Используя %s, попал %d раз и смог сделать %d фрагов.\n", weapons[weapon.Name], weapon.Hits, weapon.Kills)
+				continue
+			}
+			result += fmt.Sprintf("Используя %s, сделал %d выстрелов. При этом попал %d раз и смог сделать %d фрагов.\n", weapons[weapon.Name], weapon.Shots, weapon.Hits, weapon.Kills)
 		}
 
 		result += "\n\n"
