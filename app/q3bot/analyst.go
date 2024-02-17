@@ -25,7 +25,12 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 			case <-ticker.C:
 				match, err := getLastMatch()
 				if err != nil {
-					log.Printf("[Q3BOT] [ERROR] failed to get last match: %s", err)
+					log.Printf("[ANALYST] [ERROR] failed to get last match: %s", err)
+					continue
+				}
+
+				if lastMatchID == primitive.NilObjectID && !config.Verbose {
+					lastMatchID = match.ID
 					continue
 				}
 
@@ -35,18 +40,16 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 
 				lastMatchID = match.ID
 
-				// prompt := "You are a game commentator. Please, analyze match about Quake 3 game and make short summary about each player in comedian style with gaslighting. PLEASE REPLY SHORTLY LESS THAN 100 WORDS IN RUSSIAN LANGUAGE. WINNER IS THE ONE WHO HAS THE MOST SCORES."
-				// prompt := "Imagine you're commenting on the outcome of a Quake 3 game. Winner is the one who has the most scores. YOUR COMMENT SHOULD BE WRITTEN IN A SARCASTIC TONE IN RUSSIAN LANGUAGE AND BE UNDER 500 CHARACTERS."
 				prompt := "Представь что ты комментируешь итоги игры в Quake 3. Победитель тот, у кого больше всех очков. Твой комментарий должен быть написан в саркастическом тоне на русском языке. ПОЖАЛУЙСТА, ТВОЕ СООБЩЕНИЕ ДОЛЖНО СОДЕРЖАТЬ МАКСИМУМ 120 СЛОВ!!!"
 
 				response, err := analyzeMatchInfo(ctx, createMatchInfo(match), prompt)
 				if err != nil {
-					log.Printf("[Q3BOT] [ERROR] failed to analyze match info: %s", err)
+					log.Printf("[ANALYST] [ERROR] failed to analyze match info: %s", err)
 					continue
 				}
 
 				if config.Verbose {
-					log.Printf("[Q3BOT] [DEBUG] comment length %d", len(response))
+					log.Printf("[ANALYST] [DEBUG] comment length %d", len(response))
 				}
 
 				if len(response) > 1024 {
@@ -58,7 +61,7 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 					})
 
 					if err != nil {
-						log.Printf("[Q3BOT] [ERROR] failed to send message: %s", err)
+						log.Printf("[ANALYST] [ERROR] failed to send message: %s", err)
 					}
 
 					continue
@@ -68,7 +71,7 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 
 				image, err := generateImage(ctx, prompt)
 				if err != nil {
-					log.Printf("[Q3BOT] [ERROR] failed to generate image: %s", err)
+					log.Printf("[ANALYST] [ERROR] failed to generate image: %s", err)
 					_, err = b.SendMessage(ctx, &bot.SendMessageParams{
 						ChatID:                config.ChatID,
 						Text:                  response,
@@ -77,7 +80,7 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 					})
 
 					if err != nil {
-						log.Printf("[Q3BOT] [ERROR] failed to send message: %s", err)
+						log.Printf("[ANALYST] [ERROR] failed to send message: %s", err)
 					}
 					continue
 				}
@@ -91,7 +94,7 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 				_, err = b.SendPhoto(ctx, params)
 
 				if err != nil {
-					log.Printf("[Q3BOT] [ERROR] failed to send photo message: %s", err)
+					log.Printf("[ANALYST] [ERROR] failed to send photo message: %s", err)
 				}
 			}
 		}

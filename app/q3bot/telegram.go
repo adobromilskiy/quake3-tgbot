@@ -30,6 +30,12 @@ func New() *bot.Bot {
 }
 
 func handler(ctx context.Context, b *bot.Bot, update *models.Update) {
+	if update.Message.Text == "" {
+		if config.Verbose {
+			log.Println("[Q3BOT] [DEBUG] empty message")
+		}
+		return
+	}
 	if !strings.HasPrefix(update.Message.Text, "q3bot") {
 		return
 	}
