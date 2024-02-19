@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/adobromilskiy/quake3-stats/app/api"
@@ -139,16 +140,16 @@ func createMatchInfo(match api.Match) string {
 	}
 
 	players := map[string]string{
-		"IP":           "Дед",
-		"Javascripter": "Усы",
-		"twist":        "Мой отец",
+		"ip":           "Дед",
+		"javascripter": "Усы",
+		"twist":        "Мой папа",
 	}
 
 	result := fmt.Sprintf("Карта %s с продолжительностю %s\n", match.Map, secondsToTime(match.Duration))
 
 	for _, player := range match.Players {
 		kdr := float64(player.Kills) / float64(player.Deaths)
-		name, ok := players[player.Name]
+		name, ok := players[strings.ToLower(player.Name)]
 		if !ok {
 			name = player.Name
 		}
