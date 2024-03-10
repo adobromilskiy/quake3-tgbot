@@ -51,13 +51,15 @@ jobs:
           -t ghcr.io/${USERNAME}/quake3-tgbot:latest .
 
     - name: build and push tagged image
-      if: github.event_name == 'push' && github.event.ref_type == 'tag'
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
       env:
         USERNAME: ${{ secrets.USERNAME }}
+        GITHUB_REF: ${{ github.ref}}
       run: |
-        GIT_TAG="${GITHUB_REF#refs/tags/}"
+        ref="$(echo ${GITHUB_REF} | cut -d'/' -f3)"
+        echo GITHUB_REF - $ref
         echo ${{ secrets.DOCKERHUB_PASSWD }} | docker login -u ${USERNAME} --password-stdin
         echo ${{ secrets.GITPKG_TOKEN }} | docker login ghcr.io -u ${USERNAME} --password-stdin
         docker buildx build --push --platform linux/amd64,linux/arm64 \
-          -t ${USERNAME}/quake3-tgbot:${GIT_TAG} \
-          -t ghcr.io/${USERNAME}/quake3-tgbot:${GIT_TAG} .
+          -t ${USERNAME}/quake3-tgbot:${ref} \
+          -t ghcr.io/${USERNAME}/quake3-tgbot:${ref} .

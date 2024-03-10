@@ -239,6 +239,7 @@ func generateImage(ctx context.Context, prompt string) (string, error) {
 
 	reqUrl := openai.ImageRequest{
 		Prompt:         prompt,
+		Model:          openai.CreateImageModelDallE3,
 		Size:           openai.CreateImageSize1024x1024,
 		ResponseFormat: openai.CreateImageResponseFormatURL,
 		N:              1,
