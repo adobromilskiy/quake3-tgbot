@@ -41,7 +41,7 @@ func Analyze(ctx context.Context, b *bot.Bot) {
 
 				lastMatchID = match.ID
 
-				prompt := "Представь что ты комментируешь итоги игры в Quake 3. Победитель тот, у кого больше всех очков. Твой комментарий должен быть написан в саркастическом тоне на русском языке. ПОЖАЛУЙСТА, ТВОЕ СООБЩЕНИЕ ДОЛЖНО СОДЕРЖАТЬ МАКСИМУМ 120 СЛОВ!!!"
+				prompt := "Представь что ты комментируешь итоги игры в Quake 3. Победитель тот, у кого больше всех очков. Постарайся упомянуть название карты. Твой комментарий должен быть написан в саркастическом тоне на русском языке. ПОЖАЛУЙСТА, ТВОЕ СООБЩЕНИЕ ДОЛЖНО СОДЕРЖАТЬ МАКСИМУМ 120 СЛОВ!!!"
 
 				response, err := analyzeMatchInfo(ctx, createMatchInfo(match), prompt)
 				if err != nil {
@@ -142,10 +142,22 @@ func createMatchInfo(match api.Match) string {
 	players := map[string]string{
 		"ip":           "Дед",
 		"javascripter": "Усы",
-		"twist":        "Мой папа",
 	}
 
-	result := fmt.Sprintf("Карта %s с продолжительностю %s\n", match.Map, secondsToTime(match.Duration))
+	maps := map[string]string{
+		"cpm1a":  "Потная",
+		"cpm15":  "Сельская",
+		"cpm28":  "Считалка",
+		"cpm29":  "Рулетка",
+		"q3dm17": "Космос",
+	}
+
+	mapname, ok := maps[strings.ToLower(match.Map)]
+	if !ok {
+		mapname = match.Map
+	}
+
+	result := fmt.Sprintf("Завершилась игра на карте '%s' с продолжительностю %s.\n", mapname, secondsToTime(match.Duration))
 
 	for _, player := range match.Players {
 		kdr := float64(player.Kills) / float64(player.Deaths)
